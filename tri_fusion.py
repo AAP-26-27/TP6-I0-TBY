@@ -41,12 +41,18 @@ def comparer_generique(e1,e2,cle=None):
 
 
 def comparer_ids(e1,e2) :
+    id1 = e1["id_jeu"]
+    id2 = e2["id_jeu"]
+    return id1-id2
+     
     """ TODO: Comparer deux jeux à partir de leur champ id_jeu """ 
 
 def comparer_annees(e1,e2) : 
     """ TODO: Comparer deux jeux à partir de leur champ annee """
+    return e1["annee"] - e2["annee"]
 
 def comparer_mois(e1,e2) : 
+    return comparer_generique(e1,e2,"mois")
     """ TODO: Comparer deux jeux à partir de leur champ mois """
 
 def comparer_noms(e1,e2) : 
@@ -58,7 +64,10 @@ def comparer_noms(e1,e2) :
 
 def est_triee(L,fn_comparaison):
     """ TODO: renvoie True si L (liste python) est triée par ordre croissant du point de vue de la fonction de comparaison utilisée """
-    return False
+    for i in range(0,len(L)-1) :
+        if (fn_comparaison(L[i], L[i+1]) > 0) : return False
+    
+    return True
         
 def tri_fusion(T, debut, fin,fn_comparaison): 
     # TODO : rien à faire
@@ -75,21 +84,27 @@ def fusionner(T, d, m, f,fn_comparaison):
     global nb_affectations
     global nb_comparaisons
 
+    nb_affectations += f-d+1
     aux = T[d:f+1].copy() 				    # Copie des éléments à fusionner
     i = 0
     j = m - d + 1
     k = 0
     while i <= m - d and j <= f - d: 		# Fusion des deux parties triées
+        nb_comparaisons += 1
         if  fn_comparaison(aux[i],aux[j]) <= 0:		
+            nb_affectations +=1
             T[d + k] = aux[i]; i += 1		# aux[i] est plus petit : on le place dans t
         else:
+            nb_affectations +=1
             T[d + k] = aux[j] ; j += 1		# aux[j] est plus petit : on le place dans t
         k += 1
 
     while i <= m - d:					    # Recopie des éléments restants de la partie gauche
+        nb_affectations +=1
         T[d+k] = aux[i]; i += 1; k += 1
 
     while j <= f - d:					    # Recopie des éléments restants de la partie droite
+        nb_affectations +=1
         T[d+k] = aux[j]; j += 1; k += 1
 
 ################# TRI FUSION DE LISTES CHAINEES ################# 
@@ -261,6 +276,15 @@ def benchmark(L, nom_liste, taille_max,nombre_pas=20, fn_comparaison=None):
         values_ord.append( n  * math.log2(n))
     add_plot(values_abs,values_ord, "n x Log2(n)","")
 
+    values_abs = []
+    values_ord = []
+    for n in range(1,taille_max+1, pas):
+        values_abs.append(n)
+        values_ord.append( n )
+    add_plot(values_abs,values_ord, "n","")
+
+    
+
     write_plot("fusion.png","taille liste à trier", "comparaisons|reorganisations", "Complexité du tri fusion pour la liste '" + nom_liste+"'")
 
     add_plot(values_abs,values_ord_duree, "Tri fusion : duree","*")
@@ -287,19 +311,31 @@ if __name__ == "__main__":
     print("Affectations :", nb_affectations, "comparaisons : ", nb_comparaisons)
     print("est trié ?", est_triee(L,comparer_generique))
 
-    benchmark(L, "liste d'entiers", taille,20) 
+    # benchmark(L, "liste d'entiers", taille,20) 
     # on ne fournit pas de fonction de comparaison : comparer_generique sera utilisée
 
     # Partie 2 : tests sur des listes python de jeux #################
 
     #L = extraire_donnees("IGDB/jeux_consoles.csv", 10) # 10 éléments
-    #L = extraire_donnees("IGDB/jeux_consoles.csv") # toute la liste !
+    L = extraire_donnees("IGDB/jeux_consoles.csv") # toute la liste !
     #L = extraire_donnees("IGDB/jeux_toutes_plateformes.csv", 10) # 10 éléments
     #L = extraire_donnees("IGDB/jeux_toutes_plateformes.csv") # toute la liste !
 
     #afficher_jeux_tabulaire(L)
 
     # TODO : Comment la liste est-elle triée au départ ?
+    print("est trié par id ?", est_triee(L,comparer_ids))
+
+    tri_fusion(L, 0, len(L)-1,comparer_mois)
+    print("est trié par mois ?", est_triee(L,comparer_mois))
+
+    tri_fusion(L, 0, len(L)-1,comparer_annees)
+    print("est trié par annee ?", est_triee(L,comparer_annees))
+
+    benchmark(L, "liste d'entiers", len(L),20,comparer_ids )
+
+    #afficher_jeux_tabulaire(L)
+
     # trier pour déterminer si le tri est stable
     # Quelle est la complexité pratique du tri des jeux ?
 

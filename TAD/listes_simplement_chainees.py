@@ -251,10 +251,14 @@ class ListeChainee:
 
 def afficher_legende_simple(data) :
     """ TODO : Afficher “affichage par callback” """
+    print("affichage callback")
     pass
 
 def afficher_data_simple(indice,data): 
     """ TODO : Afficher ‘(indice) data ->’ """
+    #print("(" + str(indice) + ")", data, "===>", end="")
+    print(f"({indice}) {data} ===>", end="")
+    
     pass
 
 def tests():
@@ -266,9 +270,10 @@ def tests():
     # --------------------------------------------------
     print("\n--- 1. CRÉATION DES LISTES ---")
 
-    L = ListeChainee("L") # TODO : passer les fonctions d'affichage en paramètre des constructeurs"
-    L1 = ListeChainee("L1")
-    L2 = ListeChainee("L2")
+    L = ListeChainee("L", afficher_legende_simple, afficher_data_simple) 
+    # TODO : passer les fonctions d'affichage en paramètre des constructeurs"
+    L1 = ListeChainee("L1", afficher_legende_simple, afficher_data_simple)
+    L2 = ListeChainee("L2", afficher_legende_simple, afficher_data_simple)
 
     L.inserer_tete(10)
     L.inserer_tete(20)
@@ -279,6 +284,8 @@ def tests():
     L.afficher()
     L1.afficher()
     L2.afficher()
+
+    return
 
     # --------------------------------------------------
     # 2. Tests des insertions en position

@@ -144,16 +144,16 @@ if __name__ == "__main__":
     # NB : ce programme doit être invoqué depuis la racine du projet 
     # Puisque les chemins des fichiers à ouvrir sont exprimés par le chemin relatif IGDB/...
 
-    data = lire_csv("IGDB/jeux_consoles.csv")
-    #data = lire_csv("IGDB/jeux_toutes_plateformes.csv")
+    #data = lire_csv("IGDB/jeux_consoles.csv")
+    data = lire_csv("IGDB/jeux_toutes_plateformes.csv")
     champs_legende,data_games = structurer_jeux(data)
     print(champs_legende)
     print("Entrees :", len(data_games))
     
     if len(data_games) >0 : 
-        afficher_legende(data_games[0])
+        afficher_legende_tabulaire(data_games[0])
         for i in range(0,5) :
-            afficher_data(i,data_games[i])
+            afficher_data_tabulaire(i,data_games[i])
 
     indice = int(input("Saisir indice du jeu à afficher > "))
     if indice >=0 and indice <= len(data_games) :
